@@ -1,0 +1,388 @@
+.task-list-container {
+	height: 100%;
+	width: 100%;
+	background-color: #212121;
+	padding: 56px;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	row-gap: 32px;
+	overflow: hidden;
+}
+
+.task-list-container .task-list-profile {
+	position: fixed;
+	top: 24px;
+	right: 24px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	column-gap: 16px;
+}
+
+.task-list-container .task-list-profile .task-list-gravatar {
+	height: 36px;
+	width: 36px;
+	border-radius: 50%;
+}
+
+.task-list-container .task-list-profile .task-list-logout {
+	font-size: 14px;
+	font-weight: 500;
+	color: #ffffff;
+}
+
+.task-list-container .task-list-profile .task-list-logout:hover {
+	text-decoration: underline;
+	text-underline-offset: 6px;
+	cursor: pointer;
+}
+
+.task-list-container .task-list-heading {
+	color: #ffffff;
+	font-size: 24px;
+	font-weight: 500;
+	flex: 0 0 auto;
+}
+
+.task-list-container .task-list {
+	padding: 20px;
+	border: 1px solid #ffffff;
+	border-radius: 4px;
+	background-color: #313131;
+	height: min(500px, 100%);
+	max-height: 100%;
+	width: min(500px, 100%);
+	max-width: 100%;
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	row-gap: 24px;
+	overflow: hidden;
+}
+
+.task-list-container .task-list .task-items {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	row-gap: 16px;
+	overflow: auto;
+}
+
+.task-list-container .task-list .task-items-empty-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	row-gap: 32px;
+	padding: 0px 16px 16px 16px;
+	flex: 1 0 auto;
+}
+
+.task-list-container .task-list .task-items-empty-label {
+	color: #ffffff;
+	font-size: 16px;
+	font-weight: 400;
+}
+
+.task-list-container .task-list .task-items-empty-banner {
+	height: auto;
+	max-height: 150px;
+	width: auto;
+	max-width: 100%;
+}
+
+.task-list-container .task-list .task-items .task-item {
+	width: 100%;
+	color: #ffffff;
+	background-color: #212121;
+	padding: 12px 16px 16px 16px;
+	border-radius: 4px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+	row-gap: 16px;
+}
+
+.task-list-container .task-create-container {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: stretch;
+	column-gap: 16px;
+}
+
+.task-list-container .task-create-actions {
+	height: 36px;
+	display: flex;
+	justify-content: space-between;
+	align-items: stretch;
+	column-gap: 16px;
+}
+
+.task-list-container .task-form-input-container,
+.edit-task-modal-container .task-form-input-container,
+.task-list-container .task-form-input-label,
+.edit-task-modal-container .task-form-input-label,
+.task-list-container .task-form-input,
+.edit-task-modal-container .task-form-input,
+.task-list-container .task-form-input-adornment,
+.edit-task-modal-container .task-form-input-adornment {
+	color: #ffffff;
+}
+
+.edit-task-modal-container .task-form-input-container {
+	width: 100%;
+}
+
+.task-list-container .task-form-input,
+.edit-task-modal-container .task-form-input {
+	height: 36px;
+	width: 100%;
+}
+
+.task-list-container .task-form-input-container,
+.task-list-container .task-form-date-time-picker {
+	flex: 1 0 auto;
+}
+
+.task-list-container .task-form-date-time-picker {
+	max-width: 100px;
+	padding: 0px 12px;
+}
+
+.task-list-container .task-form-submit-button {
+	flex: 0 0 auto;
+}
+
+.task-list-container .task-form-submit-button:disabled,
+.edit-task-modal-container .task-form-submit-button:disabled {
+	color: #ffffff;
+	background-color: #1890ff;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.task-list-container .task-form-input-container,
+.task-list-container .task-form-date-time-picker,
+.task-list-container .task-form-submit-button {
+	height: 100%;
+}
+
+.task-list-container .task-item-contents {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	column-gap: 16px;
+}
+
+.task-list-container .task-item-title-container {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	column-gap: 16px;
+}
+
+.task-list-container .task-item-title,
+.task-list-container .task-item-description {
+	color: #ffffff;
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.task-list-container .task-item-description {
+	width: 100%;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.task-list-container .task-item-status {
+	color: #ffffff;
+	background-color: #1890ff;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.task-list-container .task-item-title:first-letter,
+.task-list-container .task-item-description:first-letter,
+.task-list-container .task-item-status .MuiChip-label:first-letter {
+	text-transform: uppercase;
+}
+
+.task-list-container .task-item-actions-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.task-list-container .task-item-edit-icon {
+	color: #ffffff;
+}
+
+.task-list-container .task-item-delete-icon {
+	color: #f44336;
+}
+
+@media screen and (min-width: 0px) and (max-width: 599px) {
+	.task-list-container .task-create-container {
+		flex-wrap: wrap;
+		row-gap: 24px;
+	}
+
+  .task-list-container .task-form-input-container {
+		height: auto;
+    width: 100%;
+  }
+
+	.task-list-container .task-create-actions {
+		width: 100%;
+	}
+	
+	.task-list-container .task-form-date-time-picker {
+		flex: 1 1 auto;
+		max-width: none;
+	}
+
+	.task-list-container .task-form-submit-button {
+		flex: 0 0 auto;
+	}
+}
+
+@media screen and (min-width: 600px) {
+	.task-list-container .task-form-date-time-picker {
+		flex: 0 1 auto;
+	}
+
+	.task-list-container .task-create-actions {
+		flex: 0 0 auto;
+	}
+}
+
+.edit-task-modal-container {
+	height: 400px;
+	max-height: 100%;
+	width: 400px;
+	max-width: 100%;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #212121;
+}
+
+.edit-task-modal-container .task-edit-container {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	row-gap: 24px;
+	padding: 24px;
+}
+
+.edit-task-modal-container .task-edit-form-fields {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	row-gap: 24px;
+	flex: 1 1 auto;
+}
+
+.edit-task-modal-container .task-edit-form-actions {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	column-gap: 16px;
+	flex: 0 0 auto;
+}
+
+.edit-task-modal-container .task-edit-text-area {
+    width: 100%;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 8px 12px;
+    border-radius: 4px;
+    color: #ffffff;
+    background: transparent;
+    border: 1px solid #ffffff;
+    box-shadow: none;
+	resize: none;
+	box-sizing: border-box;
+	outline: none;
+}
+
+.edit-task-modal-container .task-edit-text-area:hover {
+	border-color: #1890ff;
+}
+
+.edit-task-modal-container .task-edit-text-area:focus {
+	border-color: #1890ff;
+	box-shadow: none;
+}
+
+.edit-task-modal-container .task-edit-text-area:focus-visible {
+	outline: none;
+}
+
+.edit-task-modal-container .task-edit-date-status {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	column-gap: 16px;
+}
+
+.edit-task-modal-container .task-form-date-time-picker {
+	height: 36px;
+	flex: 1 1 auto;
+}
+
+.edit-task-modal-container .task-edit-status {
+	height: 36px;
+	flex: 0 0 auto;
+	color: #ffffff;
+}
+
+.edit-task-modal-container .task-edit-status-select {
+	color: #ffffff;
+	background-color: transparent;
+}
+
+.edit-task-modal-container .task-edit-status fieldset {
+	border-color: #ffffff;
+	border-radius: 4px;
+}
+
+.edit-task-modal-container .task-edit-status:hover fieldset {
+	border-color: #1890ff;
+}
+
+.edit-task-modal-container .task-edit-status fieldset:focus {
+	border-color: #1890ff;
+}
+
+.edit-task-modal-container .task-edit-status svg {
+	fill: #ffffff;
+}
+
+@media screen and (min-width: 0px) and (max-width: 599px) {
+	.edit-task-modal-container {
+		height: 100%;
+		width: 100%;
+	}
+}

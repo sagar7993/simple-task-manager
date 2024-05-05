@@ -1,0 +1,273 @@
+.login-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container .login-banner-container {
+  height: 100%;
+  width: calc(100% * 3 / 4);
+  background-color: #f5f5f5;
+  margin: 0px;
+  padding: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container .login-banner {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0px 56px;
+  background-image: url('../Assets/ToDoListBanner.svg');
+  background-repeat: no-repeat;
+  background-size: min(500px, 100%) min(400px, 100%);
+  background-position: calc(100% - 24px) calc(100% + 36px);
+}
+
+@media screen and (min-width: 900px) and (max-width: 1199px) {
+  .login-container .login-banner {
+    background-size: min(300px, 100%) min(400px, 100%);
+    background-position: calc(100% - 24px) calc(100% + 96px);
+  }
+}
+
+@media screen and (min-width: 1200px) and (max-width: 1535px) {
+  .login-container .login-banner {
+    background-size: min(400px, 100%) min(400px, 100%);
+    background-position: calc(100% - 24px) calc(100% + 64px);
+  }
+}
+
+@media screen and (min-width: 1536px) {
+  .login-container .login-banner {
+    background-size: min(500px, 100%) min(400px, 100%);
+    background-position: calc(100% - 24px) calc(100% + 36px);
+  }
+}
+
+.login-container .login-banner-title {
+  color: #212121;
+  font-size: 56px;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.login-container .login-banner-title-divider {
+  border: 0.05rem solid #212121;
+  color: #212121;
+  margin: 0px 0px 32px 0px;
+  min-width: 50px;
+  width: 50px;
+  clear: both;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.login-container .login-banner-subtitle {
+  color: #212121;
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 18px;
+}
+
+.login-container .login-banner-description {
+  color: #212121;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.login-container .login-form-container {
+  height: 100%;
+  width: calc(100% * 1 / 4);
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 32px;
+  margin: 0px;
+  padding: 0px;
+  background-color: #212121;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  position: relative;
+}
+
+.login-container .login-form {
+  width: calc(100% - 2 * 24px);
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 32px;
+  margin: 0px;
+  padding: 24px;
+}
+
+.login-container .login-form-icon {
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1890ff;
+  border-radius: 50%;
+  height: 56px;
+  width: 56px;
+  user-select: none;
+}
+
+.login-container .login-form-icon svg {
+  height: 24px;
+  width: 24px;
+  fill: #ffffff;
+}
+
+.login-container .login-form-label {
+  color: hsla(0, 0%, 100%, 0.85);
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  user-select: none;
+}
+
+.login-container .login-form-logo {
+  position: absolute;
+  font-size: 24px;
+  color: hsla(0, 0%, 100%, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 12px;
+  top: 24px;
+  left: 24px;
+  cursor: pointer;
+  outline: none;
+  text-decoration: none;
+  user-select: none;
+  transition: color 0.3s;
+}
+
+.login-container .login-form-logo img {
+  height: 36px;
+  width: 36px;
+}
+
+.login-container .login-form-heading {
+  color: hsla(0, 0%, 100%, 0.85);
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.login-container .login-form-input-container {
+  width: 100%;
+}
+
+.login-container .login-form-input-container,
+.login-container .login-form-input-label,
+.login-container .login-form-input,
+.login-container .login-form-input-adornment {
+  color: #ffffff;
+}
+
+.login-container .login-form-input-adornment {
+  height: 16px;
+  width: 16px;
+  fill: #ffffff;
+}
+
+.login-container .login-form-submit-button {
+  height: 48px;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff;
+  user-select: none;
+}
+
+.login-container .login-form-navigate-button {
+  font-size: 16px;
+  color: #ffffff;
+  background-color: transparent;
+  padding: 0px;
+  box-shadow: none;
+  align-self: flex-end;
+  cursor: pointer;
+  outline: none;
+  text-transform: none;
+  text-decoration: none;
+  user-select: none;
+  transition: color 0.3s;
+}
+
+.login-container .login-form-navigate-button:hover,
+.login-container .login-form-navigate-button:focus,
+.login-container .login-form-navigate-button:focus-visible,
+.login-container .login-form-navigate-button:active {
+  color: #ffffff;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.login-container .login-form-navigate-button:hover {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+@media screen and (min-width: 0px) and (max-width: 599px) {
+  .login-container .login-banner-container {
+    height: 0px;
+    width: 0px;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .login-container .login-form-container {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 600px) and (max-width: 899px) {
+  .login-container .login-banner-container {
+    height: 0px;
+    width: 0px;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .login-container .login-form-container {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 900px) and (max-width: 1199px) {
+  .login-container .login-banner-container {
+    width: calc(100% * 1 / 2);
+  }
+  .login-container .login-form-container {
+    width: calc(100% * 1 / 2);
+  }
+}
+
+@media screen and (min-width: 1200px) and (max-width: 1535px) {
+  .login-container .login-banner-container {
+    width: calc(100% * 2 / 3);
+  }
+  .login-container .login-form-container {
+    width: calc(100% * 1 / 3);
+  }
+}
+
+@media screen and (min-width: 1536px) {
+  .login-container .login-banner-container {
+    width: calc(100% * 3 / 4);
+  }
+  .login-container .login-form-container {
+    width: calc(100% * 1 / 4);
+  }
+}
