@@ -127,3 +127,8 @@ export const getGravatarProfilePhotoUrl = (email: string | null | undefined, dim
 	}
 	return `https://secure.gravatar.com/avatar/${MD5(email)}?s=${dimension}&r=pg&d=mm`;
 };
+
+export const stripHTMLFromUserInput = (potentialHTML: string) => {
+	const doc = new DOMParser().parseFromString(potentialHTML, 'text/html');
+	return doc.body.textContent as string;
+};

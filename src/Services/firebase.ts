@@ -6,8 +6,9 @@ import {
 } from 'firebase/auth';
 import {
 	getFirestore, or, and, collection, query, where, orderBy, addDoc, getDocs, updateDoc, deleteDoc, doc,
-	FieldPath, WhereFilterOp, Query, QueryConstraint, DocumentData, CollectionReference,
-	WithFieldValue, DocumentReference, UpdateData, QueryFilterConstraint, OrderByDirection
+	FieldPath, WhereFilterOp, Query, DocumentData, CollectionReference,
+	QueryConstraint, QueryFilterConstraint, QueryNonFilterConstraint, QueryCompositeFilterConstraint,
+	WithFieldValue, DocumentReference, UpdateData, OrderByDirection,
 } from 'firebase/firestore';
 
 const app = initializeApp({
@@ -33,10 +34,12 @@ export const firebase = {
 		signOut: () => signOut(auth),
 	},
 	firestore: {
+		db: firestore,
 		or: (...queryConstraints: QueryFilterConstraint[]) => or(...queryConstraints),
 		and: (...queryConstraints: QueryFilterConstraint[]) => and(...queryConstraints),
 		collection: <AppModelType, DbModelType extends DocumentData>(path: string, ...pathSegments: string[]) => collection(firestore, path, ...pathSegments) as CollectionReference<AppModelType, DbModelType>,
 		query: <AppModelType, DbModelType extends DocumentData>(reference: Query<AppModelType, DbModelType>, ...queryConstraints: QueryConstraint[]) => query<AppModelType, DbModelType>(reference, ...queryConstraints),
+		compositeQuery: <AppModelType, DbModelType extends DocumentData>(reference: Query<AppModelType, DbModelType>, compositeFilter: QueryCompositeFilterConstraint, ...queryConstraints: QueryNonFilterConstraint[]) => query<AppModelType, DbModelType>(reference, compositeFilter, ...queryConstraints),
 		where: (fieldPath: string | FieldPath, opStr: WhereFilterOp, value: unknown) => where(fieldPath, opStr, value),
 		orderBy: (fieldPath: string | FieldPath, directionStr?: OrderByDirection) => orderBy(fieldPath, directionStr),
 		addDoc: <AppModelType, DbModelType extends DocumentData>(reference: CollectionReference<AppModelType, DbModelType>, data: WithFieldValue<AppModelType>) => addDoc<AppModelType, DbModelType>(reference, data),

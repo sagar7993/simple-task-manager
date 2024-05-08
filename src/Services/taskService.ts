@@ -1,58 +1,46 @@
 import { firebase } from './firebase';
-import { QueryConstraint, QueryFieldFilterConstraint, QueryFilterConstraint } from 'firebase/firestore';
 import { Task, TaskStatus } from '../Types/taskTypes';
+import { stripHTMLFromUserInput } from '../Constants/task';
 
 export const fetchTasks = async (
 	{ userId }: { userId: string; },
 	{ status, searchTerm }: { status?: TaskStatus; searchTerm?: string; }
 ) => {
-	const queryWhere: QueryConstraint[] = [firebase.firestore.orderBy('updatedDate', 'desc')];
-	const searchByUserIdWhere: QueryFilterConstraint = firebase.firestore.where('userId', '==', userId);
-	const searchByStatusWhere: QueryFilterConstraint = firebase.firestore.where('status', '==', status);
-	const searchByTitleWhere: QueryFieldFilterConstraint[] = [
-		firebase.firestore.where('title', '>=', searchTerm),
-		firebase.firestore.where('title', '<=', searchTerm + '\uf8ff	')
-	];
-	const searchByDescriptionWhere: QueryFieldFilterConstraint[] = [
-		firebase.firestore.where('description', '>=', searchTerm),
-		firebase.firestore.where('description', '<=', searchTerm + '\uf8ff	')
-	];
-	if (typeof userId === 'string' && userId.length > 0) {
-		queryWhere.push(searchByUserIdWhere);
+	const collectionRef = firebase.firestore.collection<Omit<Task, 'id'>, Omit<Task, 'id'>>('tasks');
+	let queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(collectionRef);
+	queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef, firebase.firestore.where('userId', '==', userId));
+	if (status) {
+		queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef, firebase.firestore.where('status', '==', status));
 	}
-	if (typeof status === 'string' && status.length > 0) {
-		queryWhere.push(searchByStatusWhere);
+	if (searchTerm) {
+		queryRef = firebase.firestore.compositeQuery(queryRef, firebase.firestore.and(
+			firebase.firestore.or(
+				firebase.firestore.where('title', '>=', searchTerm.toLowerCase()),
+				firebase.firestore.where('title', '<=', searchTerm.toLowerCase() + '\uf8ff'),
+				firebase.firestore.where('description', '>=', searchTerm.toLowerCase()),
+				firebase.firestore.where('description', '<=', searchTerm.toLowerCase() + '\uf8ff')
+			)
+		));
 	}
-	// if (typeof searchTerm === 'string' && searchTerm.length > 0) {
-	// 	queryWhere.push(
-	// 		firebase.firestore.where<Omit<Task, 'id'>, Omit<Task, 'id'>>('title', '>=', searchTerm),
-	// 		firebase.firestore.where<Omit<Task, 'id'>, Omit<Task, 'id'>>('description', '>=', searchTerm)
-	// 	);
-	// }
-	// if (typeof searchTerm === 'string' && searchTerm.length > 0) {
-	// 	queryWhere.push(
-	// 		firebase.firestore.or(
-	// 			firebase.firestore.or(...searchByTitleWhere),
-	// 			firebase.firestore.or(...searchByDescriptionWhere),
-	// 		) as unknown as QueryConstraint
-	// 	);
-	// }
-	const querySnapshot = await firebase.firestore.getDocs<Omit<Task, 'id'>, Omit<Task, 'id'>>(
-		firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(
-			firebase.firestore.collection<Omit<Task, 'id'>, Omit<Task, 'id'>>('tasks'),
-			...queryWhere,
-		)
-	);
-	const tasks: Task[] = [];
-	querySnapshot.forEach((doc) => {
-		tasks.push({ id: doc.id, ...doc.data() });
-	});
-	return tasks;
+	queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef, firebase.firestore.orderBy('updatedDate', 'desc'));
+	const querySnapshot = await firebase.firestore.getDocs<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef);
+	return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Task));
 };
 
 export const createTask = async (task: Omit<Task, 'id'>) => {
+	if ((typeof task.title !== 'string' || task.title.trim().length === 0) || (typeof task.status !== 'string')) {
+		throw Error('Please set valid task title and status');
+	}
 	if (typeof task.dueDate === 'undefined') {
 		delete task.dueDate;
+	}
+	if (typeof task.description === 'undefined') {
+		delete task.description;
+	}
+	// Remove all potential HTML from title and description to prevent XSS
+	task.title = stripHTMLFromUserInput(task.title);
+	if (typeof task.description === 'string' && task.description.trim().length === 0) {
+		task.description = stripHTMLFromUserInput(task.description);
 	}
 	task.createdDate = new Date();
 	task.updatedDate = new Date();
@@ -61,14 +49,28 @@ export const createTask = async (task: Omit<Task, 'id'>) => {
 };
 
 export const updateTask = async (taskId: string, updates: Partial<Omit<Task, 'id' | 'userId' | 'createdDate' | 'updatedDate'>>) => {
+	if (typeof taskId !== 'string' || taskId.length === 0) {
+		throw Error('Please use valid task id');
+	}
+	if ((typeof updates.title !== 'string' || updates.title.trim().length === 0) || (typeof updates.status !== 'string')) {
+		throw Error('Please set valid task title and status');
+	}
 	if (typeof updates.dueDate === 'undefined') {
 		delete updates.dueDate;
+	}
+	// Remove all potential HTML from title and description to prevent XSS
+	updates.title = stripHTMLFromUserInput(updates.title);
+	if (typeof updates.description === 'string' && updates.description.trim().length === 0) {
+		updates.description = stripHTMLFromUserInput(updates.description);
 	}
 	const taskDocRef = firebase.firestore.doc<Omit<Task, 'id'>, Omit<Task, 'id'>>('tasks', taskId);
 	await firebase.firestore.updateDoc<Omit<Task, 'id'>, Omit<Task, 'id'>>(taskDocRef, updates);
 };
 
 export const deleteTask = async (taskId: string) => {
+	if (typeof taskId !== 'string' || taskId.length === 0) {
+		throw Error('Please use valid task id');
+	}
 	const taskDocRef = firebase.firestore.doc<Omit<Task, 'id'>, Omit<Task, 'id'>>('tasks', taskId);
 	await firebase.firestore.deleteDoc<Omit<Task, 'id'>, Omit<Task, 'id'>>(taskDocRef);
 };
