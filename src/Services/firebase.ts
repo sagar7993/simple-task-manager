@@ -2,7 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, verifyPasswordResetCode, signOut } from 'firebase/auth';
 import {
 	getFirestore, or, and, collection, query, where, orderBy, addDoc, getDocs, updateDoc, deleteDoc, doc,
-	FieldPath, WhereFilterOp, Query, DocumentData, CollectionReference,
+	User, FieldPath, WhereFilterOp, Query, DocumentData, CollectionReference,
 	QueryConstraint, QueryFilterConstraint, QueryNonFilterConstraint, QueryCompositeFilterConstraint,
 	WithFieldValue, DocumentReference, UpdateData, OrderByDirection,
 } from 'firebase/firestore';
