@@ -156,7 +156,7 @@ const TaskList: FC<TaskListProps> = () => {
 			setTaskTitle('');
 			setTaskDueDate(null);
 		}
-	}, [taskTitle, taskDueDate, user?.uid, setLoading, addNotification]);
+	}, [taskTitle, taskDueDate, user?.uid, setLoading, setTasks, addNotification]);
 
 	return (
 		<Box className="task-list-container" data-testid="task-list-container">
