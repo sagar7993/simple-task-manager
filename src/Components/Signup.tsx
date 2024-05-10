@@ -47,7 +47,7 @@ const Signup: FC = () => {
 	}, [email, password, setUser, navigate, addNotification]);
 
 	return (
-		<Box className="login-container">
+		<Box className="login-container" data-testid="login-container">
 			<AuthBanner />
 			<Box className="login-form-container">
 				<a className="login-form-logo" href="/">
@@ -105,8 +105,8 @@ const Signup: FC = () => {
 							),
 						}}
 					/>
-					<Button variant="contained" type="submit" className="login-form-submit-button" disabled={loading}>Sign-up</Button>
-					<Button variant="text" type="button" className="login-form-navigate-button" disabled={loading} disableRipple={true} href="/login">Already have account?</Button>
+					<Button variant="contained" type="submit" className="login-form-submit-button" data-testid="login-form-submit-button" disabled={loading}>Sign-up</Button>
+					<Button variant="text" type="button" className="login-form-navigate-button" data-testid="login-form-navigate-button" disabled={loading} disableRipple={true} href="/login">Already have account?</Button>
 				</form>
 			</Box>
 		</Box>

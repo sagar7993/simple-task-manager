@@ -101,6 +101,7 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 								variant="text"
 								type="button"
 								className="task-form-cancel-button"
+								data-testid="task-form-cancel-button"
 								disabled={loading}
 								onClick={onClose}
 							>
@@ -110,6 +111,7 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 								variant="contained"
 								type="submit"
 								className="task-form-submit-button"
+								data-testid="task-modal-submit-button"
 								disabled={loading || typeof taskTitle !== 'string' || taskTitle.trim().length === 0}
 							>
 								Update task

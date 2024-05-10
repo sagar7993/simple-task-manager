@@ -1,9 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import {
-	getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-	sendPasswordResetEmail, verifyPasswordResetCode, signOut,
-	User
-} from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, verifyPasswordResetCode, signOut } from 'firebase/auth';
 import {
 	getFirestore, or, and, collection, query, where, orderBy, addDoc, getDocs, updateDoc, deleteDoc, doc,
 	FieldPath, WhereFilterOp, Query, DocumentData, CollectionReference,

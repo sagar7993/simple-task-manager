@@ -5,7 +5,9 @@ export const RoutePaths = {
 	Signup: '/signup',
 	Tasks: '/tasks',
 	Home: '/',
-}
+};
+
+export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const loginTextFieldProps: TextFieldProps = {
 	variant: 'outlined',

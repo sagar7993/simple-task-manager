@@ -8,7 +8,9 @@ import { Task, TaskStatus } from '../Types/taskTypes';
 import { signOut } from '../Services/authService';
 import { createTask, deleteTask, fetchTasks, updateTask } from '../Services/taskService';
 import { userAtom } from '../State/authState';
+import { tasksAtom } from '../State/taskState';
 import { DATE_TIME_DAYJS_FORMAT, getGravatarProfilePhotoUrl, taskDateTimePickerProps, taskStatusDisplayLabel, taskTextFieldProps } from '../Constants/task';
+import useDebounce from '../Hooks/useDebounce';
 import useNotifications from '../Hooks/useNotification';
 import { Box, Button, Chip, Divider, IconButton, MenuItem, Modal, Select, TextField, Typography, useMediaQuery } from '@mui/material';
 import { LocalizationProvider, MobileDateTimePicker as DateTimePicker } from '@mui/x-date-pickers';
@@ -20,7 +22,6 @@ import { EditTaskModal } from './EditTaskModal';
 import { ReactComponent as ToDoListBanner } from '../Assets/ToDoListBanner.svg';
 
 import '../Styles/taskList.css';
-import useDebounce from '../Hooks/useDebounce';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -46,7 +47,7 @@ const TaskList: FC<TaskListProps> = () => {
 	const isNotMobile = useMediaQuery('(min-width:600px)');
 
 	const [loading, setLoading] = useState(false);
-	const [tasks, setTasks] = useState<Task[]>([]);
+	const [tasks, setTasks] = useAtom(tasksAtom);
 	const [deleteTaskModalVisible, setDeleteTaskModalVisible] = useState<string | null>(null);
 	const [editTaskModalVisible, setEditTaskModalVisible] = useState<string | null>(null);
 	const [filterStatus, setFilterStatus] = useState<TaskStatus | 'ALL'>('ALL');
@@ -158,7 +159,7 @@ const TaskList: FC<TaskListProps> = () => {
 	}, [taskTitle, taskDueDate, user?.uid, setLoading, addNotification]);
 
 	return (
-		<Box className="task-list-container">
+		<Box className="task-list-container" data-testid="task-list-container">
 			<IconButton className="task-list-profile" disabled={loading} disableRipple={true} onClick={handleSignout}>
 				<img src={getGravatarProfilePhotoUrl(user?.email, 200)} alt="gravatar" className="task-list-gravatar" />
 				<Typography className="task-list-logout" component="div" tabIndex={-1}>Logout</Typography>
@@ -193,6 +194,7 @@ const TaskList: FC<TaskListProps> = () => {
 									variant="contained"
 									type="submit"
 									className="task-form-submit-button"
+									data-testid="task-form-submit-button"
 									disabled={loading || typeof taskTitle !== 'string' || taskTitle.trim().length === 0}
 								>
 									Add task
@@ -238,8 +240,8 @@ const TaskList: FC<TaskListProps> = () => {
 							</Box>
 						) : (
 							<Box className="task-items">
-									{filteredTasks.map((task) => (
-									<Box key={task.id} className="task-item">
+								{filteredTasks.map((task) => (
+									<Box key={task.id} className="task-item" data-testid="task-item">
 										<Box className="task-item-contents">
 											{(((task.title as string)?.trim?.()?.length > 0) || (typeof task.status === 'string' && task.status.length > 0)) && (
 												<Box className="task-item-title-container">
@@ -290,6 +292,7 @@ const TaskList: FC<TaskListProps> = () => {
 							variant="text"
 							type="button"
 							className="delete-task-modal-submit-button"
+							data-testid="delete-task-modal-submit-button"
 							disabled={loading}
 							onClick={() => setDeleteTaskModalVisible(null)}
 						>
@@ -299,6 +302,7 @@ const TaskList: FC<TaskListProps> = () => {
 							variant="contained"
 							type="submit"
 							className="delete-task-modal-cancel-button"
+							data-testid="delete-task-modal-cancel-button"
 							disabled={loading}
 							onClick={() => handleDeleteTask((tasks.find(task => task.id === deleteTaskModalVisible))?.id as string)}
 						>
