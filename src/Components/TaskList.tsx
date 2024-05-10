@@ -116,7 +116,7 @@ const TaskList: FC<TaskListProps> = () => {
 		} finally {
 			setDeleteTaskModalVisible(null);
 		}
-	}, [setLoading, addNotification]);
+	}, [setTasks, setLoading, addNotification]);
 
 	const handleEditTask = useCallback(async (taskId: string, updates: Partial<Omit<Task, 'id' | 'userId' | 'createdDate' | 'updatedDate'>>) => {
 		if (typeof taskId !== 'string' || taskId.length === 0) {
@@ -137,7 +137,7 @@ const TaskList: FC<TaskListProps> = () => {
 		} finally {
 			setEditTaskModalVisible(null);
 		}
-	}, [setLoading, addNotification]);
+	}, [setTasks, setLoading, addNotification]);
 
 	const handleAddTask = useCallback(async () => {
 		if (typeof taskTitle !== 'string' || taskTitle.trim().length === 0) {
