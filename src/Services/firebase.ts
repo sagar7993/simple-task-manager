@@ -15,7 +15,9 @@ const app = initializeApp({
 	messagingSenderId: '90069756654',
 	appId: '1:90069756654:web:796b7c51fcd2043ff8e1ff'
 });
+
 const auth = getAuth(app);
+
 const firestore = getFirestore(app);
 
 export const firebase = {
