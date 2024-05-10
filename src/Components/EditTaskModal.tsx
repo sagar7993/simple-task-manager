@@ -77,6 +77,8 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 										value={taskDueDate ?? null}
 										onAccept={setTaskDueDate}
 										onChange={setTaskDueDate}
+										// Ensure that due date cannot be past date
+										minDate={dayjs().tz('UTC').startOf('day')}
 									/>
 								</LocalizationProvider>
 								<Select<TaskStatus>

@@ -90,4 +90,4 @@ export const authErrors: Record<string, string> = {
 	"auth/user-signed-out": "The user has signed out.",
 	"auth/weak-password": "The password must be 6 characters long or more.",
 	"auth/web-storage-unsupported": "This browser is not supported or 3rd party cookies and data may be disabled."
-}
+};

@@ -28,7 +28,10 @@ export const fetchTasks = async (
 };
 
 export const createTask = async (task: Omit<Task, 'id'>) => {
-	if ((typeof task.title !== 'string' || task.title.trim().length === 0) || (typeof task.status !== 'string')) {
+	if (
+		(typeof task.title !== 'string' || task.title.trim().length === 0) ||
+		([TaskStatus.Done, TaskStatus.InProgress, TaskStatus.ToDo].indexOf(task.status as TaskStatus) === -1)
+	) {
 		throw Error('Please set valid task title and status');
 	}
 	if (typeof task.dueDate === 'undefined') {
@@ -52,7 +55,10 @@ export const updateTask = async (taskId: string, updates: Partial<Omit<Task, 'id
 	if (typeof taskId !== 'string' || taskId.length === 0) {
 		throw Error('Please use valid task id');
 	}
-	if ((typeof updates.title !== 'string' || updates.title.trim().length === 0) || (typeof updates.status !== 'string')) {
+	if (
+		(typeof updates.title !== 'string' || updates.title.trim().length === 0) ||
+		([TaskStatus.Done, TaskStatus.InProgress, TaskStatus.ToDo].indexOf(updates.status as TaskStatus) === -1)
+	) {
 		throw Error('Please set valid task title and status');
 	}
 	if (typeof updates.dueDate === 'undefined') {
@@ -64,7 +70,7 @@ export const updateTask = async (taskId: string, updates: Partial<Omit<Task, 'id
 		updates.description = stripHTMLFromUserInput(updates.description);
 	}
 	const taskDocRef = firebase.firestore.doc<Omit<Task, 'id'>, Omit<Task, 'id'>>('tasks', taskId);
-	await firebase.firestore.updateDoc<Omit<Task, 'id'>, Omit<Task, 'id'>>(taskDocRef, updates);
+	await firebase.firestore.updateDoc<Omit<Task, 'id'>, Omit<Task, 'id'>>(taskDocRef, { ...updates, updatedDate: new Date() });
 };
 
 export const deleteTask = async (taskId: string) => {
