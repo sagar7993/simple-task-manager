@@ -213,7 +213,7 @@ const TaskList: FC<TaskListProps> = () => {
 	return (
 		<Box className="task-list-container" data-testid="task-list-container">
 			<Box className="task-list-profile">
-				<img src={getGravatarProfilePhotoUrl(user?.email, 200)} alt="gravatar" className="task-list-gravatar" draggable={false} />
+				<img src={getGravatarProfilePhotoUrl(user?.email, 200)} alt="gravatar" className="task-list-gravatar" draggable={false} loading="lazy" />
 				<IconButton className="task-list-logout-container" data-testid="task-list-logout-container" disabled={loading} disableRipple={true} onClick={handleSignout}>
 					<Typography className="task-list-logout" data-testid="task-list-profile" component="div" tabIndex={-1}>Logout</Typography>
 				</IconButton>

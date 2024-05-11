@@ -17,7 +17,13 @@ export const fetchTasks = async (
 	if (typeof searchTerm === 'string' && searchTerm.trim().length > 0) {
 		params.append('searchTerm', searchTerm.trim());
 	}
-	const data = await fetch(`/api/v1/tasks${params.size > 0 ? `?${params.toString()}` : ''}`);
+	// Handler for this GET request is implemented using Node.js Express server created using MSW library in the ./src/Mocks/handlers.ts file
+	const data = await fetch(`/api/v1/tasks${params.size > 0 ? `?${params.toString()}` : ''}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
 	return data.json() as Promise<Task[]>;
 };
 
@@ -43,6 +49,7 @@ export const createTask = async (task: Omit<Task, 'id' | 'createdDate' | 'update
 	}
 	// Firestore rules already created to handle further server side validations in firebase.json file
 	// Ensure to set createdDate and updatedDate to current date timestamp
+	// Handler for this POST request is implemented using Node.js Express server created using MSW library in the ./src/Mocks/handlers.ts file
 	const data = await fetch('/api/v1/tasks', {
 		method: 'POST',
 		headers: {
@@ -76,6 +83,7 @@ export const updateTask = async (taskId: string, updates: Partial<Omit<Task, 'id
 	}
 	// Firestore rules already created to handle further server side validations in firebase.json file
 	// Ensure to set updatedDate to current date timestamp
+	// Handler for this PUT request is implemented using Node.js Express server created using MSW library in the ./src/Mocks/handlers.ts file
 	const data = await fetch('/api/v1/tasks', {
 		method: 'PUT',
 		headers: {
@@ -92,6 +100,7 @@ export const deleteTask = async (taskId: string) => {
 		throw Error('Please use valid task id');
 	}
 	// Firestore rules already created to handle further server side validations in firebase.json file
+	// Handler for this DELETE request is implemented using Node.js Express server created using MSW library in the ./src/Mocks/handlers.ts file
 	const data = await fetch('/api/v1/tasks', {
 		method: 'DELETE',
 		headers: {

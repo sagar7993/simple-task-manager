@@ -3,6 +3,10 @@ import { http, HttpResponse, PathParams } from 'msw';
 import { Task, TaskStatus } from '../Types/taskTypes';
 import { stripHTMLFromUserInput } from '../Constants/task';
 
+// Check `firebase.json` files to review the security rules defined in firebase for server side validations
+// Security rules are defined to allow list/read operations for current logged in user's tasks only
+// Security rules are there to allow update/delete operations for current logged in user's tasks only
+
 export const handlers = [
 	// HTTP GET method to get all the tasks for current userId from firebase collection
 	http.get('/api/v1/tasks', async ({ request }) => {

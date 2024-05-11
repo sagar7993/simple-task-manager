@@ -67,7 +67,7 @@ const Signup: FC = () => {
 			<AuthBanner />
 			<Box className="login-form-container">
 				<a className="login-form-logo" href="/">
-					<img src="logo192.png" alt="logo" draggable={false} />
+					<img src="logo192.png" alt="logo" draggable={false} loading="lazy" />
 					<Typography className="login-form-heading" component="h2">Task manager</Typography>
 				</a>
 				<Box className="login-form-icon">
