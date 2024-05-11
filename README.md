@@ -1,46 +1,47 @@
-# Getting Started with Create React App
+# Simple task manager App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## [Click here to view demo online](https://pesto-task-manager.netlify.app/)
 
-## Available Scripts
+## Libraries used
 
-In the project directory, you can run:
+React.js, Material-UI, React-Virtuoso, Firebase, Jotai, and MSW
 
-### `npm start`
+## Main features of the app
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### 1. State management
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+The app uses jotai library (atom) to maintain application state. All API requests are executed MSW and cached in local storage for faster performance. I have created a custom hook to make API requests and handle it's error and loading states with proper loading spinners and animation transitions.
 
-### `npm test`
+On initial page load, tasks will be fetched from server (firebase for database) and rendered using react-virtuoso to ensure huge lists can be rendered with very high performance.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 2. Responsive design implementation
 
-### `npm run build`
+The app is responsive and works perfectly on mobile and desktop via media queries to customize styles on various screen sizes. I have extensively tested in all major browsers and mobile as well.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 3. Filtering and sorting of tasks
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+In the TasksList.tsx file there are dropdowns implemented for user to filter tasks by status and to sort the tasks on due date or title (alphabetically) or even on recently updated tasks, both ascending and descending orders
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 4. Search tasks by title or name
 
-### `npm run eject`
+In the TasksList.tsx file there is a text field in which user can type to search the tasks list with a debounce functionality to prevent too many API requests
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### 5. API implementation
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Using MSW library I have implemented and used CRUD API's for tasks using Node.js - fetch tasks, create task, update task, and delete task.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### 6. CreateTaskForm.tsx file for creating new tasks
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+User can create a new task by clicking on the add task button. The title, description, and due date fields have to be filled with both server side and client side validations to create a new task
 
-## Learn More
+### 7. EditTaskModal.tsx file for updating existing tasks
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+User can update any existing task by clicking on the edit icon. The title, description, status, and due date properties can be updated with both server side and client side validation to update existing task
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 8. TaskList.tsx file to view all tasks and delete any task
+
+User can delete any existing task by clicking on delete icon which also renders a confirmation modal popup to prevent accidental deletions.
+
+### 9. Authentication and security using firebase authentication and firestore rules
+
+User has to be logged in before viewing his tasks. All user generated inputs are sanitized to prevent XSS attacks. Firebase security rules are written in `firebase.json` file to ensure authorization for all CRUD requests.
