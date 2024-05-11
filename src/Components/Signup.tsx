@@ -67,6 +67,7 @@ const Signup: FC = () => {
 			<AuthBanner />
 			<Box className="login-form-container">
 				<a className="login-form-logo" href="/">
+					{/* Lazy load logo image to get faster initial load time for this page */}
 					<img src="logo192.png" alt="logo" draggable={false} loading="lazy" />
 					<Typography className="login-form-heading" component="h2">Task manager</Typography>
 				</a>
