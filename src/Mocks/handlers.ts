@@ -36,10 +36,10 @@ export const handlers = [
 		// Order the tasks based on the updatedDate in descending order
 		queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef, firebase.firestore.orderBy('updatedDate', 'desc'));
 		const querySnapshot = await firebase.firestore.getDocs<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef);
-		const tasks = querySnapshot.docs.map(({ id, data }) => {
-			const task = data();
+		const tasks = querySnapshot.docs.map((doc) => {
+			const task = doc.data();
 			return {
-				id,
+				id: doc.id,
 				...task,
 				createdDate: (task.createdDate as unknown as Timestamp)?.toDate?.(),
 				updatedDate: (task.updatedDate as unknown as Timestamp)?.toDate?.()
