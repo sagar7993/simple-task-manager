@@ -15,55 +15,52 @@ interface EditTaskModalProps {
 	open: boolean;
 	loading: boolean;
 	onClose: () => void;
-	onSubmit: (taskId: string, updates: Partial<Omit<Task, 'id' | 'userId' | 'createdDate' | 'updatedDate'>>) => void;
+	onSubmit: (taskId: string, updates: Partial<Omit<Task, 'id' | 'userId' | 'createdDate' | 'updatedDate'>>) => Promise<void>;
 	task: Task;
 }
 
 export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, onSubmit, task }) => {
-	const [taskTitle, setTaskTitle] = useState(task?.title ?? '');
-	const [taskDescription, setTaskDescription] = useState(task?.description ?? '');
-	const [taskDueDate, setTaskDueDate] = useState<Dayjs | null>(task?.dueDate ? dayjs(task?.dueDate) : null);
-	const [taskStatus, setTaskStatus] = useState(task?.status ?? TaskStatus.ToDo);
+	const [title, setTitle] = useState(task?.title ?? '');
+	const [description, setDescription] = useState(task?.description ?? '');
+	const [dueDate, setDueDate] = useState<Dayjs | null>(task?.dueDate ? dayjs(task?.dueDate) : null);
+	const [status, setStatus] = useState(task?.status ?? TaskStatus.ToDo);
 
 	useEffect(() => {
 		if (!open) {
-			setTaskTitle('');
-			setTaskDescription('');
-			setTaskDueDate(null);
-			setTaskStatus(TaskStatus.ToDo);
+			// Reset all values in the form after modal is closed
+			setTitle('');
+			setDescription('');
+			setDueDate(null);
+			setStatus(TaskStatus.ToDo);
 			return;
 		}
-		setTaskTitle(task?.title);
-		setTaskDescription(task?.description || '');
-		setTaskDueDate(task?.dueDate ? dayjs(task?.dueDate) : null);
-		setTaskStatus(task?.status);
+		// Set the initial values in form after modal is opened
+		setTitle(task?.title);
+		setDescription(task?.description || '');
+		setDueDate(task?.dueDate ? dayjs(task?.dueDate) : null);
+		setStatus(task?.status);
 	}, [open, task?.title, task?.description, task?.dueDate, task?.status]);
 
 	return (
 		<Modal open={open} onClose={onClose}>
 			<Box className="edit-task-modal-container">
 				{(typeof task?.id === 'string' && task?.id?.length > 0) && (
-					<form className="task-edit-container" onSubmit={(event: FormEvent) => { event.preventDefault(); onSubmit(task?.id, {
-						title: taskTitle,
-						description: taskDescription,
-						dueDate: taskDueDate?.toDate?.(),
-						status: taskStatus
-					}); }}>
+					<form className="task-edit-container" onSubmit={(event: FormEvent) => { event.preventDefault(); onSubmit(task?.id, { title, description, dueDate: dueDate?.toDate?.(), status }); }}>
 						<Box className="task-edit-form-fields">
 							<TextField
 								{...taskTextFieldProps }
 								type="text"
 								placeholder="Please enter task title"
-								value={taskTitle ?? ''}
-								onChange={({ target: { value } }) => setTaskTitle(value)}
+								value={title ?? ''}
+								onChange={({ target: { value } }) => setTitle(value)}
 								autoFocus={true}
 								autoComplete="off"
 							/>
 							<TextareaAutosize
 								{...taskTextAreaProps}
 								placeholder="Please enter task description"
-								value={taskDescription ?? ''}
-								onChange={({ target: { value } }) => setTaskDescription(value)}
+								value={description ?? ''}
+								onChange={({ target: { value } }) => setDescription(value)}
 								onResize={() => {}}
 								autoComplete="off"
 								minRows={2}
@@ -74,9 +71,9 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 									<DateTimePicker<Dayjs>
 										{...taskDateTimePickerProps}
 										format={DATE_TIME_DAYJS_FORMAT}
-										value={taskDueDate ?? null}
-										onAccept={setTaskDueDate}
-										onChange={setTaskDueDate}
+										value={dueDate ?? null}
+										onAccept={setDueDate}
+										onChange={setDueDate}
 										// Ensure that due date cannot be past date
 										minDate={dayjs().tz('UTC').startOf('day')}
 									/>
@@ -84,8 +81,8 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 								<Select<TaskStatus>
 									size="small"
 									className="task-edit-status"
-									value={taskStatus ?? TaskStatus.ToDo}
-									onChange={({ target: { value } }) => setTaskStatus(value as TaskStatus)}
+									value={status ?? TaskStatus.ToDo}
+									onChange={({ target: { value } }) => setStatus(value as TaskStatus)}
 									classes={{
 										select: 'task-edit-status-select'
 									}}
@@ -102,6 +99,7 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 								type="button"
 								className="task-form-cancel-button"
 								data-testid="task-form-cancel-button"
+								// Disable cancel button while loading state is true
 								disabled={loading}
 								onClick={onClose}
 							>
@@ -112,7 +110,8 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 								type="submit"
 								className="task-form-submit-button"
 								data-testid="task-modal-submit-button"
-								disabled={loading || typeof taskTitle !== 'string' || taskTitle.trim().length === 0}
+								// Disable submit button until valid title is entered
+								disabled={loading || typeof title !== 'string' || title.trim().length === 0}
 							>
 								Update task
 							</Button>

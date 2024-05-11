@@ -34,15 +34,31 @@ const Signup: FC = () => {
 	}, []);
 
 	const handleSignup = useCallback(async () => {
+		if (
+			(typeof email !== 'string' || email.trim().length === 0) ||
+			(typeof password !== 'string' || password.trim().length === 0)
+		) {
+			// Show error toast notification on bottom right of page
+			addNotification({ type: 'error', message: 'Please enter valid email and password' });
+			return;
+		}
+		// Set loading to true so that progress indicator can be shown beside the button
 		setUser((prev) => ({ ...prev, loading: true, user: null }));
 		try {
-			const { user } = await signUp(email, password);
+			const { user } = await signUp({ email: email.trim(), password: password.trim() });
+			// Show success toast notification on bottom right of page
 			addNotification({ type: 'success', message: 'Signup successful' });
+			// Set user value so that tasks page can be rendered
 			setUser((prev) => ({ ...prev, loading: false, user }));
 			navigate(RoutePaths.Tasks, { replace: true });
 		} catch (error) {
+			// Show error toast notification on bottom right of page
 			addNotification({ type: 'error', message: authErrors[(error as FirebaseError).code] ?? (error as FirebaseError).message });
 			setUser((prev) => ({ ...prev, loading: false, user: null }));
+		} finally {
+			// Reset the form after promise is resolved or error is thrown
+			setEmail('');
+			setPassword('');
 		}
 	}, [email, password, setUser, navigate, addNotification]);
 
@@ -51,7 +67,7 @@ const Signup: FC = () => {
 			<AuthBanner />
 			<Box className="login-form-container">
 				<a className="login-form-logo" href="/">
-					<img src="logo192.png" alt="logo" />
+					<img src="logo192.png" alt="logo" draggable={false} />
 					<Typography className="login-form-heading" component="h2">Task manager</Typography>
 				</a>
 				<Box className="login-form-icon">
@@ -105,8 +121,28 @@ const Signup: FC = () => {
 							),
 						}}
 					/>
-					<Button variant="contained" type="submit" className="login-form-submit-button" data-testid="login-form-submit-button" disabled={loading}>Sign-up</Button>
-					<Button variant="text" type="button" className="login-form-navigate-button" data-testid="login-form-navigate-button" disabled={loading} disableRipple={true} href="/login">Already have account?</Button>
+					<Button
+						variant="contained"
+						type="submit"
+						className="login-form-submit-button"
+						data-testid="login-form-submit-button"
+						// Disable signup submit button while loading state is true
+						disabled={loading}
+					>
+						Sign-up
+					</Button>
+					<Button
+						variant="text"
+						type="button"
+						className="login-form-navigate-button"
+						data-testid="login-form-navigate-button"
+						// Disable route change button while loading state is true
+						disabled={loading}
+						disableRipple={true}
+						href={RoutePaths.Login}
+					>
+						Already have account?
+					</Button>
 				</form>
 			</Box>
 		</Box>

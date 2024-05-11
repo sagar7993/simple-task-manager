@@ -14,6 +14,15 @@ test('shows login screen when user is not logged in', async () => {
 	await screen.findByTestId<HTMLDivElement>('login-container');
 });
 
+test('shows login screen after alreay logged-in user has logged out', async () => {
+	const setUserAtom = useSetAtom(userAtom);
+	setUserAtom({ user: { uid: 'test-user' } as unknown as User, loading: false });
+	render(<App />);
+	fireEvent.click(screen.getByTestId('task-list-logout-container'));
+	await delay(2000);
+	await screen.findByTestId<HTMLDivElement>('login-container');
+});
+
 test('shows tasks screen when user is logged in', async () => {
 	const setUserAtom = useSetAtom(userAtom);
 	setUserAtom({ user: { uid: 'test-user' } as unknown as User, loading: false });

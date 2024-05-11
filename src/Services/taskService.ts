@@ -2,6 +2,10 @@ import { firebase } from './firebase';
 import { Task, TaskStatus } from '../Types/taskTypes';
 import { stripHTMLFromUserInput } from '../Constants/task';
 
+// Check `firebase.json` files to review the security rules defined in firebase for server side validations
+// Security rules are defined to allow list/read operations for current logged in user's tasks only
+// Security rules are there to allow update/delete operations for current logged in user's tasks only
+
 export const fetchTasks = async (
 	{ userId }: { userId: string; },
 	{ status, searchTerm }: { status?: TaskStatus; searchTerm?: string; }
@@ -27,13 +31,15 @@ export const fetchTasks = async (
 	return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Task));
 };
 
-export const createTask = async (task: Omit<Task, 'id'>) => {
+export const createTask = async (task: Omit<Task, 'id' | 'createdDate' | 'updatedDate'>) => {
+	// Check if the title is a valid string and status is a valid enum value
 	if (
 		(typeof task.title !== 'string' || task.title.trim().length === 0) ||
 		([TaskStatus.Done, TaskStatus.InProgress, TaskStatus.ToDo].indexOf(task.status as TaskStatus) === -1)
 	) {
 		throw Error('Please set valid task title and status');
 	}
+	// Check if optional values are sent as undefined, firestore only allows null values
 	if (typeof task.dueDate === 'undefined') {
 		delete task.dueDate;
 	}
@@ -45,22 +51,25 @@ export const createTask = async (task: Omit<Task, 'id'>) => {
 	if (typeof task.description === 'string' && task.description.trim().length === 0) {
 		task.description = stripHTMLFromUserInput(task.description);
 	}
-	task.createdDate = new Date();
-	task.updatedDate = new Date();
+	// Firestore rules already created to handle further server side validations in firebase.json file
+	// Ensure to set createdDate and updatedDate to current date timestamp
 	const taskRef = await firebase.firestore.addDoc<Omit<Task, 'id'>, Omit<Task, 'id'>>(firebase.firestore.collection('tasks'), task);
-	return { id: taskRef.id, ...task } as Task;
+	return { id: taskRef.id, ...task, createdDate: new Date(), updatedDate: new Date() } as Task;
 };
 
 export const updateTask = async (taskId: string, updates: Partial<Omit<Task, 'id' | 'userId' | 'createdDate' | 'updatedDate'>>) => {
-	if (typeof taskId !== 'string' || taskId.length === 0) {
+	// Check if the taskId is a valid string
+	if (typeof taskId !== 'string' || taskId.trim().length === 0) {
 		throw Error('Please use valid task id');
 	}
+	// Check if the title is a valid string and status is a valid enum value
 	if (
 		(typeof updates.title !== 'string' || updates.title.trim().length === 0) ||
 		([TaskStatus.Done, TaskStatus.InProgress, TaskStatus.ToDo].indexOf(updates.status as TaskStatus) === -1)
 	) {
 		throw Error('Please set valid task title and status');
 	}
+	// Check if optional values are sent as undefined, firestore only allows null values
 	if (typeof updates.dueDate === 'undefined') {
 		delete updates.dueDate;
 	}
@@ -69,14 +78,18 @@ export const updateTask = async (taskId: string, updates: Partial<Omit<Task, 'id
 	if (typeof updates.description === 'string' && updates.description.trim().length === 0) {
 		updates.description = stripHTMLFromUserInput(updates.description);
 	}
-	const taskDocRef = firebase.firestore.doc<Omit<Task, 'id'>, Omit<Task, 'id'>>('tasks', taskId);
+	const taskDocRef = firebase.firestore.doc<Omit<Task, 'id'>, Omit<Task, 'id'>>('tasks', taskId.trim());
+	// Firestore rules already created to handle further server side validations in firebase.json file
+	// Ensure to set updatedDate to current date timestamp
 	await firebase.firestore.updateDoc<Omit<Task, 'id'>, Omit<Task, 'id'>>(taskDocRef, { ...updates, updatedDate: new Date() });
 };
 
 export const deleteTask = async (taskId: string) => {
-	if (typeof taskId !== 'string' || taskId.length === 0) {
+	// Check if the taskId is a valid string
+	if (typeof taskId !== 'string' || taskId.trim().length === 0) {
 		throw Error('Please use valid task id');
 	}
-	const taskDocRef = firebase.firestore.doc<Omit<Task, 'id'>, Omit<Task, 'id'>>('tasks', taskId);
+	const taskDocRef = firebase.firestore.doc<Omit<Task, 'id'>, Omit<Task, 'id'>>('tasks', taskId.trim());
+	// Firestore rules already created to handle further server side validations in firebase.json file
 	await firebase.firestore.deleteDoc<Omit<Task, 'id'>, Omit<Task, 'id'>>(taskDocRef);
 };
