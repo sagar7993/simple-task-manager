@@ -2,6 +2,7 @@ import { firebase } from '../Services/firebase';
 import { http, HttpResponse, PathParams } from 'msw';
 import { Task, TaskStatus } from '../Types/taskTypes';
 import { stripHTMLFromUserInput } from '../Constants/task';
+import { Timestamp } from 'firebase/firestore';
 
 // Check `firebase.json` files to review the security rules defined in firebase for server side validations
 // Security rules are defined to allow list/read operations for current logged in user's tasks only
@@ -35,7 +36,15 @@ export const handlers = [
 		// Order the tasks based on the updatedDate in descending order
 		queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef, firebase.firestore.orderBy('updatedDate', 'desc'));
 		const querySnapshot = await firebase.firestore.getDocs<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef);
-		const tasks = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Task));
+		const tasks = querySnapshot.docs.map(({ id, data }) => {
+			const task = data();
+			return {
+				id,
+				...task,
+				createdDate: (task.createdDate as unknown as Timestamp)?.toDate?.(),
+				updatedDate: (task.updatedDate as unknown as Timestamp)?.toDate?.()
+			} as Task;
+		});
 		return HttpResponse.json(tasks, { status: 200 });
 	}),
 	// HTTP POST method to add a new task to the firebase collection
@@ -62,8 +71,10 @@ export const handlers = [
 		}
 		// Firestore rules already created to handle further server side validations in firebase.json file
 		// Ensure to set createdDate and updatedDate to current date timestamp
-		const taskRef = await firebase.firestore.addDoc<Omit<Task, 'id'>, Omit<Task, 'id'>>(firebase.firestore.collection('tasks'), task);
-		return HttpResponse.json({ id: taskRef.id, ...task, createdDate: new Date(), updatedDate: new Date() } as Task, { status: 201 });
+		const createdDate = new Date();
+		const updatedDate = new Date();
+		const taskRef = await firebase.firestore.addDoc<Omit<Task, 'id'>, Omit<Task, 'id'>>(firebase.firestore.collection('tasks'), { ...task, createdDate, updatedDate });
+		return HttpResponse.json({ id: taskRef.id, ...task, createdDate, updatedDate } as Task, { status: 201 });
 	}),
 	// HTTP PUT method to update an existing task in the firebase collection
 	http.put<PathParams, Partial<Omit<Task, 'userId' | 'createdDate' | 'updatedDate'>>>('api/v1/tasks', async ({ request }) => {
@@ -91,7 +102,8 @@ export const handlers = [
 		const taskDocRef = firebase.firestore.doc<Omit<Task, 'id'>, Omit<Task, 'id'>>('tasks', task.id.trim());
 		// Firestore rules already created to handle further server side validations in firebase.json file
 		// Ensure to set updatedDate to current date timestamp
-		await firebase.firestore.updateDoc<Omit<Task, 'id'>, Omit<Task, 'id'>>(taskDocRef, { ...task, updatedDate: new Date() });
+		const updatedDate = new Date();
+		await firebase.firestore.updateDoc<Omit<Task, 'id'>, Omit<Task, 'id'>>(taskDocRef, { ...task, updatedDate });
 		return HttpResponse.json({}, { status: 200 });
 	}),
 	// HTTP DELETE method to delete an existing task in the firebase collection
