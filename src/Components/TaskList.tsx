@@ -1,5 +1,4 @@
 import { FC, Fragment, useState, useEffect, useCallback, useMemo } from 'react';
-import { FirebaseError } from 'firebase/app';
 import { useAtom } from 'jotai';
 import { Virtuoso } from 'react-virtuoso';
 import { Task, TaskStatus } from '../Types/taskTypes';
@@ -36,6 +35,7 @@ const TaskList: FC<TaskListProps> = () => {
 	const [filterStatus, setFilterStatus] = useState<TaskStatus | 'ALL'>('ALL');
 	const [searchTerm, setSearchTerm] = useState('');
 
+	// Ensure that search is debounced to avoid unnecessary API calls during typing
 	const debouncedSearchTerm = useDebounce<string>(searchTerm, 500);
 
 	const filteredTasks = useMemo(() => {
@@ -51,22 +51,33 @@ const TaskList: FC<TaskListProps> = () => {
 	}, [tasks, debouncedSearchTerm]);
 
 	const fetchTasksData = useCallback(async () => {
+		// Check if the user is logged in
 		if (!user?.uid) {
 			setTasks([]);
 			return;
 		}
 		// Set loading to true so that progress indicator can be shown in the list view
 		setLoading(true);
-		const tasksData = await fetchTasks(
-			{ userId: user?.uid as string },
-			{ status: filterStatus === 'ALL' ? undefined : filterStatus, searchTerm: debouncedSearchTerm }
-		);
-		setTasks(tasksData);
-		// Set loading to false so that progress indicator can be disabled
-		setLoading(false);
+		try {
+			const tasksData = await fetchTasks(
+				{ userId: user?.uid as string },
+				{ status: filterStatus === 'ALL' ? undefined : filterStatus, searchTerm: debouncedSearchTerm }
+			);
+			setTasks(tasksData);
+		} catch (error) {
+			// Show error toast notification on bottom right of page
+			addNotification({ type: 'error', message: (error as Error).message });
+			// Set tasks to empty array so that no tasks are rendered in the list view
+			setTasks([]);
+			return;
+		} finally {
+			// Set loading to false so that progress indicator can be disabled
+			setLoading(false);
+		}
 	}, [user?.uid, filterStatus, debouncedSearchTerm, setTasks]);
 
 	useEffect(() => {
+		// Fetch tasks data when the component is mounted
 		fetchTasksData();
 	}, [fetchTasksData]);
 
@@ -80,7 +91,7 @@ const TaskList: FC<TaskListProps> = () => {
 			setUser((prev) => ({ ...prev, loading: false, user: null }));
 		} catch (error) {
 			// Show error toast notification on bottom right of page
-			addNotification({ type: 'error', message: (error as FirebaseError).message });
+			addNotification({ type: 'error', message: (error as Error).message });
 		} finally {
 			// Set loading to false so that progress indicator can be disabled
 			setLoading(false);
@@ -102,7 +113,7 @@ const TaskList: FC<TaskListProps> = () => {
 			addNotification({ type: 'success', message: 'Task deletion successful' });
 		} catch (error) {
 			// Show error toast notification on bottom right of page
-			addNotification({ type: 'error', message: (error as FirebaseError).message });
+			addNotification({ type: 'error', message: (error as Error).message });
 		} finally {
 			// Set loading to false so that progress indicator can be disabled
 			setLoading(false);
@@ -112,10 +123,11 @@ const TaskList: FC<TaskListProps> = () => {
 	}, [setTasks, setLoading, addNotification]);
 
 	const handleEditTask = useCallback(async (taskId: string, updates: Partial<Omit<Task, 'id' | 'userId' | 'createdDate' | 'updatedDate'>>) => {
-		// Check if the task id is a valid string and title and status are valid strings
+		// Check if the task id is a valid string
 		if (typeof taskId !== 'string' || taskId.length === 0) {
 			return;
 		}
+		// Check if the title and status are valid strings
 		if ((typeof updates.title !== 'string' || updates.title.trim().length === 0) || (typeof updates.status !== 'string')) {
 			return;
 		}
@@ -128,7 +140,7 @@ const TaskList: FC<TaskListProps> = () => {
 			addNotification({ type: 'success', message: 'Task update successful' });
 		} catch (error) {
 			// Show error toast notification on bottom right of page
-			addNotification({ type: 'error', message: (error as FirebaseError).message });
+			addNotification({ type: 'error', message: (error as Error).message });
 		} finally {
 			// Set loading to false so that progress indicator can be disabled
 			setLoading(false);
@@ -151,7 +163,7 @@ const TaskList: FC<TaskListProps> = () => {
 			addNotification({ type: 'success', message: 'Task creation successful' });
 		} catch (error) {
 			// Show error toast notification on bottom right of page
-			addNotification({ type: 'error', message: (error as FirebaseError).message });
+			addNotification({ type: 'error', message: (error as Error).message });
 		} finally {
 			// Set loading to false so that progress indicator can be disabled
 			setLoading(false);

@@ -53,7 +53,7 @@ const Login: FC = () => {
 			navigate(RoutePaths.Tasks, { replace: true });
 		} catch (error) {
 			// Show error toast notification on bottom right of page
-			addNotification({ type: 'error', message: authErrors[(error as FirebaseError).code] ?? (error as FirebaseError).message });
+			addNotification({ type: 'error', message: authErrors[(error as FirebaseError).code] ?? (error as Error).message });
 			// Set loading to false so that progress indicator can be disabled
 			setUser((prev) => ({ ...prev, loading: false, user: null }));
 		} finally {
