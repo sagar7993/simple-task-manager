@@ -1,4 +1,4 @@
-import { FC, FormEvent, useEffect, useState } from 'react';
+import { FC, FormEvent, useEffect, useState, useCallback } from 'react';
 import { Button, TextField, Box,  Modal, TextareaAutosize, Select, MenuItem } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -41,11 +41,23 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 		setStatus(task?.status);
 	}, [open, task?.title, task?.description, task?.dueDate, task?.status]);
 
+	const handleFormSubmit = useCallback(() => {
+		// Check if the task id is a valid string
+		if (typeof task?.id !== 'string' || task?.id?.length === 0) {
+			return;
+		}
+		// Check if the title and status are valid strings
+		if ((typeof task?.title !== 'string' || task?.title?.trim?.()?.length === 0) || ([TaskStatus.Done, TaskStatus.InProgress, TaskStatus.ToDo].indexOf(task?.status as TaskStatus) === -1)) {
+			return;
+		}
+		onSubmit(task?.id, { title, description, dueDate: dueDate?.toDate?.(), status });
+	}, [onSubmit, task?.id, title, description, dueDate, status]);
+
 	return (
 		<Modal open={open} onClose={onClose}>
 			<Box className="edit-task-modal-container">
 				{(typeof task?.id === 'string' && task?.id?.length > 0) && (
-					<form className="task-edit-container" onSubmit={(event: FormEvent) => { event.preventDefault(); onSubmit(task?.id, { title, description, dueDate: dueDate?.toDate?.(), status }); }}>
+					<form className="task-edit-container" onSubmit={(event: FormEvent) => { event.preventDefault(); handleFormSubmit(); }}>
 						<Box className="task-edit-form-fields">
 							<TextField
 								{...taskTextFieldProps }

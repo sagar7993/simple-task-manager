@@ -128,7 +128,7 @@ const TaskList: FC<TaskListProps> = () => {
 			return;
 		}
 		// Check if the title and status are valid strings
-		if ((typeof updates.title !== 'string' || updates.title.trim().length === 0) || (typeof updates.status !== 'string')) {
+		if ((typeof updates.title !== 'string' || updates.title.trim().length === 0) || ([TaskStatus.Done, TaskStatus.InProgress, TaskStatus.ToDo].indexOf(updates.status as TaskStatus) === -1)) {
 			return;
 		}
 		setLoading(true);

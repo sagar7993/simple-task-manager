@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState } from 'react';
+import { FC, FormEvent, useCallback, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -21,8 +21,16 @@ export const CreateTaskForm: FC<CreateTaskFormProps> = ({ onSubmit, loading }) =
 	const [description, setDescription] = useState<string>('');
 	const [dueDate, setDueDate] = useState<Dayjs | null>(null);
 
+	const handleFormSubmit = useCallback(() => {
+		// Check if the title is a valid string
+		if (typeof title !== 'string' || title.trim().length === 0) {
+			return;
+		}
+		onSubmit({ title, dueDate: (dueDate as Dayjs | null)?.toDate?.() });
+	}, [onSubmit, title, dueDate]);
+
 	return (
-		<form className="task-create-container" onSubmit={(event: FormEvent) => { event.preventDefault(); onSubmit({ title, dueDate: (dueDate as Dayjs | null)?.toDate?.() }); }}>
+		<form className="task-create-container" onSubmit={(event: FormEvent) => { event.preventDefault(); handleFormSubmit(); }}>
 			<Box className="task-fields-container">
 				<TextField
 					{...taskTextFieldProps}
