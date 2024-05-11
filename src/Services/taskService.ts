@@ -1,26 +1,29 @@
-import { Task, TaskStatus } from '../Types/taskTypes';
+import { Task, TaskSortBy, TaskStatus } from '../Types/taskTypes';
 import { stripHTMLFromUserInput } from '../Constants/task';
 
-// Check `firebase.json` files to review the security rules defined in firebase for server side validations
+// Check `firebase.json` file to review the security rules defined in firebase for server side validations
 // Security rules are defined to allow list/read operations for current logged in user's tasks only
 // Security rules are there to allow update/delete operations for current logged in user's tasks only
 
-// All the Node.js backend framework logic is created using MSQ library and defined in the ./src/Mocks/handlers.ts file
+// All the Node.js backend framework logic is created using MSQ library and defined in the `./src/Mocks/handlers.ts` file
 
 export const fetchTasks = async (
 	{ userId }: { userId: string; },
-	{ status, searchTerm }: { status?: TaskStatus; searchTerm?: string; }
+	{ status, sortBy, searchTerm }: { status?: TaskStatus; sortBy?: TaskSortBy; searchTerm?: string; }
 ) => {
 	const params = new URLSearchParams();
 	params.append('userId', userId);
 	if ([TaskStatus.Done, TaskStatus.InProgress, TaskStatus.ToDo].indexOf(status as TaskStatus) > -1) {
 		params.append('status', status as string);
 	}
+	if ([TaskSortBy.TitleDesc, TaskSortBy.TitleAsc, TaskSortBy.DueDateDesc, TaskSortBy.DueDateAsc, TaskSortBy.UpdatedDateDesc, TaskSortBy.UpdatedDateAsc].indexOf(sortBy as TaskSortBy) > -1) {
+		params.append('sortBy', sortBy as string);
+	}
 	if (typeof searchTerm === 'string' && searchTerm.trim().length > 0) {
 		params.append('searchTerm', searchTerm.trim());
 	}
 	// Handler for this GET request is implemented using Node.js server created using MSW library
-	// Check the Node.js backend framework logic defined in the ./src/Mocks/handlers.ts file
+	// Check the Node.js backend framework logic defined in the `./src/Mocks/handlers.ts` file
 	const data = await fetch(`/api/v1/tasks${params.size > 0 ? `?${params.toString()}` : ''}`, {
 		method: 'GET',
 		headers: {
@@ -50,10 +53,10 @@ export const createTask = async (task: Omit<Task, 'id' | 'createdDate' | 'update
 	if (typeof task.description === 'string' && task.description.trim().length === 0) {
 		task.description = stripHTMLFromUserInput(task.description);
 	}
-	// Firestore rules already created to handle further server side validations in firebase.json file
+	// Firestore rules already created to handle further server side validations in `firebase.json` file
 	// Ensure to set createdDate and updatedDate to current date timestamp
 	// Handler for this POST request is implemented using Node.js server created using MSW library
-	// Check the Node.js backend framework logic defined in the ./src/Mocks/handlers.ts file
+	// Check the Node.js backend framework logic defined in the `./src/Mocks/handlers.ts` file
 	const data = await fetch('/api/v1/tasks', {
 		method: 'POST',
 		headers: {
@@ -85,10 +88,10 @@ export const updateTask = async (taskId: string, updates: Partial<Omit<Task, 'id
 	if (typeof updates.description === 'string' && updates.description.trim().length === 0) {
 		updates.description = stripHTMLFromUserInput(updates.description);
 	}
-	// Firestore rules already created to handle further server side validations in firebase.json file
+	// Firestore rules already created to handle further server side validations in `firebase.json` file
 	// Ensure to set updatedDate to current date timestamp
 	// Handler for this PUT request is implemented using Node.js server created using MSW library
-	// Check the Node.js backend framework logic defined in the ./src/Mocks/handlers.ts file
+	// Check the Node.js backend framework logic defined in the `./src/Mocks/handlers.ts` file
 	const data = await fetch('/api/v1/tasks', {
 		method: 'PUT',
 		headers: {
@@ -104,9 +107,9 @@ export const deleteTask = async (taskId: string) => {
 	if (typeof taskId !== 'string' || taskId.trim().length === 0) {
 		throw Error('Please use valid task id');
 	}
-	// Firestore rules already created to handle further server side validations in firebase.json file
+	// Firestore rules already created to handle further server side validations in `firebase.json` file
 	// Handler for this DELETE request is implemented using Node.js server created using MSW
-	// Check the Node.js backend framework logic defined in the ./src/Mocks/handlers.ts file
+	// Check the Node.js backend framework logic defined in the `./src/Mocks/handlers.ts` file
 	const data = await fetch('/api/v1/tasks', {
 		method: 'DELETE',
 		headers: {

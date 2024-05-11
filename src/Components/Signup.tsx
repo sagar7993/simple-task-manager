@@ -76,6 +76,7 @@ const Signup: FC = () => {
 				</Box>
 				<Typography className="login-form-label" component="h1">Sign-up</Typography>
 				<form className="login-form" onSubmit={(event: FormEvent) => { event.preventDefault(); handleSignup(); }}>
+					{/* Text field for email */}
 					<TextField
 						{...loginTextFieldProps}
 						type="email"
@@ -94,6 +95,7 @@ const Signup: FC = () => {
 							),
 						}}
 					/>
+					{/* Text field for password */}
 					<TextField
 						{...loginTextFieldProps}
 						type={showPassword ? 'text' : 'password'}
@@ -122,6 +124,7 @@ const Signup: FC = () => {
 							),
 						}}
 					/>
+					{/* Submit button to signup */}
 					<Button
 						variant="contained"
 						type="submit"
@@ -132,6 +135,7 @@ const Signup: FC = () => {
 					>
 						Sign-up
 					</Button>
+					{/* Navigate to signup page */}
 					<Button
 						variant="text"
 						type="button"

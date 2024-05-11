@@ -59,6 +59,7 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 				{(typeof task?.id === 'string' && task?.id?.length > 0) && (
 					<form className="task-edit-container" onSubmit={(event: FormEvent) => { event.preventDefault(); handleFormSubmit(); }}>
 						<Box className="task-edit-form-fields">
+							{/* Text field for task title */}
 							<TextField
 								{...taskTextFieldProps }
 								type="text"
@@ -68,6 +69,7 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 								autoFocus={true}
 								autoComplete="off"
 							/>
+							{/* Text area for task description */}
 							<TextareaAutosize
 								{...taskTextAreaProps}
 								placeholder="Please enter task description"
@@ -79,6 +81,7 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 								maxRows={4}
 							/>
 							<Box className="task-edit-date-status">
+								{/* Date time picker for task due date */}
 								<LocalizationProvider dateAdapter={AdapterDayjs}>
 									<DateTimePicker<Dayjs>
 										{...taskDateTimePickerProps}
@@ -90,6 +93,7 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 										minDate={dayjs().tz('UTC').startOf('day')}
 									/>
 								</LocalizationProvider>
+								{/* Select field for task status */}
 								<Select<TaskStatus>
 									size="small"
 									className="task-edit-status"
@@ -106,6 +110,7 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 							</Box>
 						</Box>
 						<Box className="task-edit-form-actions">
+							{/* Cancel button to abort editing task */}
 							<Button
 								variant="text"
 								type="button"
@@ -117,6 +122,7 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 							>
 								Cancel
 							</Button>
+							{/* Submit button to update task */}
 							<Button
 								variant="contained"
 								type="submit"

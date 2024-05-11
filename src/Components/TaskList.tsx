@@ -1,7 +1,7 @@
 import { FC, Fragment, useState, useEffect, useCallback, useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { Virtuoso } from 'react-virtuoso';
-import { Task, TaskStatus } from '../Types/taskTypes';
+import { Task, TaskSortBy, TaskStatus } from '../Types/taskTypes';
 import { signOut } from '../Services/authService';
 import { createTask, deleteTask, fetchTasks, updateTask } from '../Services/taskService';
 import { userAtom } from '../State/authState';
@@ -33,6 +33,7 @@ const TaskList: FC<TaskListProps> = () => {
 	const [deleteTaskModalVisible, setDeleteTaskModalVisible] = useState<string | null>(null);
 	const [editTaskModalVisible, setEditTaskModalVisible] = useState<string | null>(null);
 	const [filterStatus, setFilterStatus] = useState<TaskStatus | 'ALL'>('ALL');
+	const [filterSortBy, setFilterSortBy] = useState<TaskSortBy | 'NONE'>('NONE');
 	const [searchTerm, setSearchTerm] = useState('');
 
 	// Ensure that search is debounced to avoid unnecessary API calls during typing
@@ -61,7 +62,11 @@ const TaskList: FC<TaskListProps> = () => {
 		try {
 			const tasksData = await fetchTasks(
 				{ userId: user?.uid as string },
-				{ status: filterStatus === 'ALL' ? undefined : filterStatus, searchTerm: debouncedSearchTerm }
+				{
+					status: filterStatus === 'ALL' ? undefined : filterStatus,
+					sortBy: filterSortBy === 'NONE' ? undefined : filterSortBy,
+					searchTerm: debouncedSearchTerm
+				}
 			);
 			setTasks(tasksData);
 		} catch (error) {
@@ -74,7 +79,7 @@ const TaskList: FC<TaskListProps> = () => {
 			// Set loading to false so that progress indicator can be disabled
 			setLoading(false);
 		}
-	}, [user?.uid, filterStatus, debouncedSearchTerm, setTasks, addNotification, setLoading]);
+	}, [user?.uid, filterStatus, filterSortBy, debouncedSearchTerm, setTasks, addNotification, setLoading]);
 
 	useEffect(() => {
 		// Fetch tasks data when the component is mounted
@@ -226,6 +231,7 @@ const TaskList: FC<TaskListProps> = () => {
 						<CreateTaskForm loading={loading} onSubmit={handleAddTask} />
 						<Divider className="task-list-divider" />
 						<Box className="task-filter-container">
+							{/* Text field to search tasks by title or description with debounce */}
 							<TextField
 								{...taskTextFieldProps}
 								classes={{ root: 'task-form-input-container' }}
@@ -239,11 +245,12 @@ const TaskList: FC<TaskListProps> = () => {
 								autoComplete="off"
 							/>
 							<Box className="task-filter-sort-container">
-								<Typography className="task-filter-sort-heading" component="div">Sort by:</Typography>
+								<Typography className="task-filter-sort-heading" component="div">Filter by:</Typography>
+								{/* Select dropdown to filter tasks by status */}
 								<Select<TaskStatus | 'ALL'>
 									size="small"
 									className="task-filter-status"
-									value={filterStatus ?? 'All'}
+									value={filterStatus ?? 'ALL'}
 									onChange={({ target: { value } }) => setFilterStatus(value as TaskStatus)}
 									classes={{
 										select: 'task-filter-status-select'
@@ -253,6 +260,25 @@ const TaskList: FC<TaskListProps> = () => {
 									<MenuItem value={TaskStatus.ToDo}>{taskStatusDisplayLabel[TaskStatus.ToDo]}</MenuItem>
 									<MenuItem value={TaskStatus.InProgress}>{taskStatusDisplayLabel[TaskStatus.InProgress]}</MenuItem>
 									<MenuItem value={TaskStatus.Done}>{taskStatusDisplayLabel[TaskStatus.Done]}</MenuItem>
+								</Select>
+								<Typography className="task-filter-sort-heading" component="div">Sort by:</Typography>
+								{/* Select dropdown to sort tasks by status or due date or updated date in either ascending or descending order */}
+								<Select<TaskSortBy | 'NONE'>
+									size="small"
+									className="task-filter-status"
+									value={filterSortBy ?? 'NONE'}
+									onChange={({ target: { value } }) => setFilterSortBy(value as TaskSortBy)}
+									classes={{
+										select: 'task-filter-status-select'
+									}}
+								>
+									<MenuItem value="NONE">None</MenuItem>
+									<MenuItem value={TaskSortBy.TitleDesc}>Title (Z-A)</MenuItem>
+									<MenuItem value={TaskSortBy.TitleAsc}>Title (A-Z)</MenuItem>
+									<MenuItem value={TaskSortBy.DueDateDesc}>Due date (Recent first)</MenuItem>
+									<MenuItem value={TaskSortBy.DueDateAsc}>Due date (Recent last)</MenuItem>
+									<MenuItem value={TaskSortBy.UpdatedDateDesc}>Updated (Recent first)</MenuItem>
+									<MenuItem value={TaskSortBy.UpdatedDateAsc}>Updated (Recent last)</MenuItem>
 								</Select>
 							</Box>
 						</Box>

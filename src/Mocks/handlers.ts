@@ -1,10 +1,10 @@
 import { firebase } from '../Services/firebase';
-import { http, HttpResponse, PathParams } from 'msw';
-import { Task, TaskStatus } from '../Types/taskTypes';
-import { stripHTMLFromUserInput } from '../Constants/task';
 import { Timestamp } from 'firebase/firestore';
+import { http, HttpResponse, PathParams } from 'msw';
+import { Task, TaskStatus, TaskSortBy } from '../Types/taskTypes';
+import { stripHTMLFromUserInput } from '../Constants/task';
 
-// Check `firebase.json` files to review the security rules defined in firebase for server side validations
+// Check `firebase.json` file to review the security rules defined in firebase for server side validations
 // Security rules are defined to allow list/read operations for current logged in user's tasks only
 // Security rules are there to allow update/delete operations for current logged in user's tasks only
 
@@ -16,6 +16,7 @@ export const handlers = [
 		const userId = requestUrl.searchParams.get('userId');
 		const status = requestUrl.searchParams.get('status');
 		const searchTerm = requestUrl.searchParams.get('searchTerm');
+		const sortBy = requestUrl.searchParams.get('sortBy');
 		let queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(collectionRef);
 		queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef, firebase.firestore.where('userId', '==', userId));
 		// If status is provided, filter the tasks based on the status
@@ -33,8 +34,41 @@ export const handlers = [
 				)
 			));
 		}
-		// Order the tasks based on the updatedDate in descending order
-		queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef, firebase.firestore.orderBy('updatedDate', 'desc'));
+		// Order the tasks based on the sortBy query parameter if present
+		if ([TaskSortBy.TitleDesc, TaskSortBy.TitleAsc, TaskSortBy.DueDateDesc, TaskSortBy.DueDateAsc, TaskSortBy.UpdatedDateDesc, TaskSortBy.UpdatedDateAsc].indexOf(sortBy as TaskSortBy) > -1) {
+			switch (sortBy) {
+				case TaskSortBy.TitleDesc: {
+					queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef, firebase.firestore.orderBy('title', 'desc'));
+					break;
+				}
+				case TaskSortBy.TitleAsc: {
+					queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef, firebase.firestore.orderBy('title', 'asc'));
+					break;
+				}
+				case TaskSortBy.DueDateDesc: {
+					queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef, firebase.firestore.orderBy('dueDate', 'desc'));
+					break;
+				}
+				case TaskSortBy.DueDateAsc: {
+					queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef, firebase.firestore.orderBy('dueDate', 'asc'));
+					break;
+				}
+				case TaskSortBy.UpdatedDateDesc: {
+					queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef, firebase.firestore.orderBy('updatedDate', 'desc'));
+					break;
+				}
+				case TaskSortBy.UpdatedDateAsc: {
+					queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef, firebase.firestore.orderBy('updatedDate', 'asc'));
+					break;
+				}
+			}
+		} else {
+			// Order the tasks based on the updatedDate in descending order as a fallback
+			queryRef = firebase.firestore.query<Omit<Task, 'id'>, Omit<Task, 'id'>>(
+				queryRef,
+				firebase.firestore.orderBy('updatedDate', 'desc')
+			);
+		}
 		const querySnapshot = await firebase.firestore.getDocs<Omit<Task, 'id'>, Omit<Task, 'id'>>(queryRef);
 		const tasks = querySnapshot.docs.map((doc) => {
 			const task = doc.data();
@@ -69,7 +103,7 @@ export const handlers = [
 		if (typeof task.description === 'string' && task.description.trim().length === 0) {
 			task.description = stripHTMLFromUserInput(task.description);
 		}
-		// Firestore rules already created to handle further server side validations in firebase.json file
+		// Firestore rules already created to handle further server side validations in `firebase.json` file
 		// Ensure to set createdDate and updatedDate to current date timestamp
 		const createdDate = new Date();
 		const updatedDate = new Date();
@@ -100,7 +134,7 @@ export const handlers = [
 			task.description = stripHTMLFromUserInput(task.description);
 		}
 		const taskDocRef = firebase.firestore.doc<Omit<Task, 'id'>, Omit<Task, 'id'>>('tasks', task.id.trim());
-		// Firestore rules already created to handle further server side validations in firebase.json file
+		// Firestore rules already created to handle further server side validations in `firebase.json` file
 		// Ensure to set updatedDate to current date timestamp
 		const updatedDate = new Date();
 		await firebase.firestore.updateDoc<Omit<Task, 'id'>, Omit<Task, 'id'>>(taskDocRef, { ...task, updatedDate });
@@ -114,7 +148,7 @@ export const handlers = [
 			throw Error('Please use valid task id');
 		}
 		const taskDocRef = firebase.firestore.doc<Omit<Task, 'id'>, Omit<Task, 'id'>>('tasks', task.id.trim());
-		// Firestore rules already created to handle further server side validations in firebase.json file
+		// Firestore rules already created to handle further server side validations in `firebase.json` file
 		await firebase.firestore.deleteDoc<Omit<Task, 'id'>, Omit<Task, 'id'>>(taskDocRef);
 		return HttpResponse.json({}, { status: 200 });
 	})

@@ -32,6 +32,7 @@ export const CreateTaskForm: FC<CreateTaskFormProps> = ({ onSubmit, loading }) =
 	return (
 		<form className="task-create-container" onSubmit={(event: FormEvent) => { event.preventDefault(); handleFormSubmit(); }}>
 			<Box className="task-fields-container">
+				{/* Text field for task title */}
 				<TextField
 					{...taskTextFieldProps}
 					type="text"
@@ -42,6 +43,7 @@ export const CreateTaskForm: FC<CreateTaskFormProps> = ({ onSubmit, loading }) =
 					autoComplete="off"
 				/>
 				<Box className="task-create-actions">
+					{/* Date time picker for task due date */}
 					<LocalizationProvider dateAdapter={AdapterDayjs}>
 						<DateTimePicker<Dayjs>
 							{...taskDateTimePickerProps}
@@ -53,6 +55,7 @@ export const CreateTaskForm: FC<CreateTaskFormProps> = ({ onSubmit, loading }) =
 							minDate={dayjs().tz('UTC').startOf('day')}
 						/>
 					</LocalizationProvider>
+					{/* Submit button to create new task */}
 					<Button
 						variant="contained"
 						type="submit"
@@ -65,6 +68,7 @@ export const CreateTaskForm: FC<CreateTaskFormProps> = ({ onSubmit, loading }) =
 					</Button>
 				</Box>
 			</Box>
+			{/* Text area for task description */}
 			<TextareaAutosize
 				{...taskTextAreaProps}
 				placeholder="Please enter task description"

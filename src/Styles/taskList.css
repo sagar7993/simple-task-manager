@@ -258,11 +258,11 @@
 
 @media screen and (min-width: 600px) {
 	.task-list-container .task-filter-container .task-form-input-container {
-		flex: 1 0 auto;
+		flex: 1 1 auto;
 	}
 
 	.task-list-container .task-filter-container .task-filter-sort-container {
-		flex: 0 0 auto;
+		flex: 0 1 auto;
 	}
 }
 
