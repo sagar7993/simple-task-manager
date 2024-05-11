@@ -74,7 +74,7 @@ const TaskList: FC<TaskListProps> = () => {
 			// Set loading to false so that progress indicator can be disabled
 			setLoading(false);
 		}
-	}, [user?.uid, filterStatus, debouncedSearchTerm, setTasks]);
+	}, [user?.uid, filterStatus, debouncedSearchTerm, setTasks, addNotification, setLoading]);
 
 	useEffect(() => {
 		// Fetch tasks data when the component is mounted
