@@ -47,7 +47,7 @@ export const EditTaskModal: FC<EditTaskModalProps> = ({ open, loading, onClose, 
 			return;
 		}
 		// Check if the title and status are valid strings
-		if ((typeof task?.title !== 'string' || task?.title?.trim?.()?.length === 0) || ([TaskStatus.Done, TaskStatus.InProgress, TaskStatus.ToDo].indexOf(task?.status as TaskStatus) === -1)) {
+		if ((typeof title !== 'string' || title?.trim?.()?.length === 0) || ([TaskStatus.Done, TaskStatus.InProgress, TaskStatus.ToDo].indexOf(status as TaskStatus) === -1)) {
 			return;
 		}
 		onSubmit(task?.id, { title, description, dueDate: dueDate?.toDate?.(), status });
