@@ -39,7 +39,7 @@ const TaskList: FC<TaskListProps> = () => {
 	const debouncedSearchTerm = useDebounce<string>(searchTerm, 500);
 
 	const filteredTasks = useMemo(() => {
-		return tasks.filter((task) => {
+		return (tasks ?? new Array<Task>()).filter((task) => {
 			if (typeof debouncedSearchTerm !== 'string' || debouncedSearchTerm.length === 0) {
 				return true;
 			}
